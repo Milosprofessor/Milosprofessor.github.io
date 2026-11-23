@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1425">
+<meta name="description" content="Hram Pitagore — besplatna, samostalna matematička avantura za sedmi razred.">
+<title>Hram Pitagore | Matematička avantura</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0b1425;
+  --panel:#121f35;
+  --panel2:#182943;
+  --ink:#ecf4ff;
+  --muted:#afc0d8;
+  --line:rgba(214,230,255,.14);
+  --gold:#f7c873;
+  --aqua:#6be4ce;
+  --red:#f8a9a9;
+  --ok:#a3efbf;
+  --shade:0 16px 60px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{
+  margin:0;
+  min-height:100vh;
+  font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(ellipse at 80% 1%,rgba(35,71,110,.86) 0,transparent 36%),
+    radial-gradient(ellipse at 0 100%,rgba(25,46,72,.95) 0,transparent 40%),
+    linear-gradient(180deg,#091121 0%,#0b1425 100%);
+  position:relative;
+  overflow-x:hidden;
+}
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:auto;
+  pointer-events:none;
+  z-index:0;
+  filter:blur(18px);
+}
+body::before{
+  width:300px;
+  height:300px;
+  left:-80px;
+  bottom:12vh;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(107,228,206,.12),transparent 70%);
+  animation:glowShift 8s ease-in-out infinite;
+}
+body::after{
+  width:240px;
+  height:240px;
+  right:-60px;
+  top:14vh;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(247,200,115,.10),transparent 70%);
+  animation:glowShift 10s ease-in-out infinite reverse;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--aqua);outline-offset:3px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.shell{width:min(1160px,calc(100% - 32px));margin:auto;position:relative;z-index:1}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:22px 0;gap:16px}
+.brand{display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.02em}
+.brand-symbol{
+  display:grid;place-items:center;width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(145deg,#f8dc9b,#d69541);color:#18273b;font:700 29px Georgia,serif;
+  box-shadow:0 8px 18px rgba(214,149,65,.25);
+}
+.top-tag{border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--muted);font-size:.82rem;white-space:nowrap;background:rgba(255,255,255,.03)}
+.eyebrow{color:var(--aqua);text-transform:uppercase;letter-spacing:.16em;font-size:.77rem;font-weight:800}
+.hero{display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:34px;min-height:calc(100vh - 144px);padding-bottom:55px}
+.hero h1{font:700 clamp(3.1rem,7vw,5.5rem)/1.05 Georgia,serif;letter-spacing:-.05em;margin:10px 0 16px}
+.hero h1 span{color:var(--gold)}
+.intro{color:#c5d3e6;max-width:560px;font-size:1.12rem}
+.feature-pills{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0}
+.pill{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:99px;padding:7px 12px;color:#d9e5f3;font-size:.84rem}
+.btn{appearance:none;border:0;border-radius:13px;padding:14px 21px;font-weight:800;min-height:49px;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:transform .15s,filter .15s,box-shadow .15s}
+.btn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.05)}
+.btn-primary{background:linear-gradient(110deg,#ffe0a0,#efbc60);color:#17253b;box-shadow:0 12px 28px rgba(233,166,66,.18)}
+.btn-secondary{background:#243751;color:var(--ink);border:1px solid var(--line)}
+.btn-quiet{background:transparent;border:1px solid var(--line);color:#e1ebfa}
+.fine{font-size:.82rem;color:var(--muted);margin-top:16px}
+.illustration{position:relative;min-height:430px;display:grid;place-items:center;filter:drop-shadow(0 25px 50px rgba(0,0,0,.25))}
+.illustration svg{width:min(100%,490px);height:auto;overflow:visible}
+.temple-wrap{animation:floatTemple 5.2s ease-in-out infinite}
+.temple-shadow{animation:shadowPulse 5.2s ease-in-out infinite}
+.portal-glow{animation:portalPulse 2.6s ease-in-out infinite}
+.portal-door{animation:portalPulse 2.6s ease-in-out infinite}
+.rune{animation:runePulse 2.4s ease-in-out infinite}
+.star{animation:twinkle 3.4s ease-in-out infinite}
+.star.s2{animation-delay:.7s}
+.star.s3{animation-delay:1.5s}
+.star.s4{animation-delay:2.1s}
+.star.s5{animation-delay:2.7s}
+.mist-1{animation:drift 16s linear infinite}
+.mist-2{animation:drift 22s linear infinite reverse}
+.panel{border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(24,42,68,.96),rgba(13,27,46,.97));box-shadow:var(--shade);backdrop-filter:blur(10px)}
+.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:20px;padding:12px 0 50px}
+.main-panel{padding:clamp(20px,4vw,36px);min-height:650px;position:relative;overflow:hidden}
+.main-panel::before{
+  content:"";
+  position:absolute;
+  width:360px;height:360px;right:-150px;top:-160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(107,228,206,.11),transparent 70%);
+  pointer-events:none;
+}
+.sidebar{padding:24px;align-self:start;position:sticky;top:20px}
+.back-link{background:none;border:0;color:var(--muted);padding:0;font-weight:700;margin-bottom:22px}
+.back-link:hover{text-decoration:underline}
+.room-kicker{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--aqua);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em}
+.room-heading{font:700 clamp(2rem,4.5vw,3.05rem)/1.12 Georgia,serif;margin:9px 0 10px}
+.room-desc{color:#d4e1f0;max-width:680px;margin-bottom:18px}
+.room-atmosphere{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+.atmosphere-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.03);color:#d8e5f3;font-size:.84rem}
+.chip-dot{width:9px;height:9px;border-radius:50%;background:var(--aqua);box-shadow:0 0 12px rgba(107,228,206,.45);animation:chipPulse 2s ease-in-out infinite}
+.chip-dot.gold{background:var(--gold);box-shadow:0 0 12px rgba(247,200,115,.42);animation-delay:.6s}
+.visual-box{border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;background:radial-gradient(circle at 50% 45%,#2f5076 0%,#14263f 78%);padding:18px;margin:20px 0 24px;text-align:center;position:relative}
+.visual-box::before{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 35%),radial-gradient(circle at 50% 18%,rgba(255,224,160,.12),transparent 36%);
+}
+.visual-box svg{position:relative;z-index:1;width:min(100%,520px);height:auto;max-height:280px;overflow:visible}
+.diagram-note{color:#d6e3f2;font-size:.86rem;margin:12px 0 0;position:relative;z-index:1}
+.question{font-weight:800;font-size:1.07rem;margin:15px 0}
+.answer-form{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.answer-input{background:#0b182b;color:var(--ink);padding:13px 14px;border:1px solid #5b728f;border-radius:12px;width:min(240px,100%);min-height:50px;font-size:1.14rem}
+.answer-input::placeholder{color:#93a6c0}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice{min-height:75px;display:flex;align-items:center;gap:12px;text-align:left;border-radius:13px;border:1px solid #405472;background:#152a43;color:var(--ink);padding:14px 17px;font-weight:800}
+.choice:hover,.choice:focus-visible{border-color:var(--gold);background:#213c59}
+.choice span{font-size:1.4rem}
+.muted{color:var(--muted)}
+.support{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px}
+.hint-panel,.message,.explain-panel{border-radius:16px;margin-top:16px;padding:16px 18px}
+.hint-panel{border:1px solid rgba(107,228,206,.32);background:rgba(107,228,206,.08);color:#ddfff6}
+.message{border:1px solid rgba(255,215,136,.35);background:rgba(255,215,136,.08)}
+.message.error{border-color:rgba(248,169,169,.35);background:rgba(248,169,169,.07);color:#ffe1e1}
+.message.success{border-color:rgba(163,239,191,.4);background:rgba(163,239,191,.1);color:#ddffe7}
+.message strong{display:block;margin-bottom:4px}
+.explain-panel{border:1px solid rgba(247,200,115,.30);background:linear-gradient(145deg,rgba(247,200,115,.08),rgba(255,255,255,.03))}
+.explain-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(240px,.75fr);gap:18px;align-items:start}
+.explain-panel h3{margin:0 0 8px;font-size:1.08rem}
+.explain-panel p{margin:0 0 12px;color:#dce8f6}
+.step-list{display:grid;gap:10px}
+.step-item{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:14px;background:rgba(8,18,30,.26);border:1px solid rgba(255,255,255,.06)}
+.step-no{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-weight:800;background:rgba(247,200,115,.15);border:1px solid rgba(247,200,115,.25);color:#ffd993}
+.step-text{font-weight:600;color:#f1f7ff}
+.step-mini{font-size:.85rem;color:#c5d3e6;margin-top:2px}
+.tablet{border:1px solid rgba(255,255,255,.1);border-radius:18px;background:linear-gradient(180deg,rgba(36,54,77,.92),rgba(17,27,40,.96));padding:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.tablet svg{width:100%;height:auto;display:block;overflow:visible}
+.tablet-note{font-size:.82rem;color:#b7c7dd;margin-top:8px;text-align:center}
+.bar{height:9px;background:#26374f;border-radius:99px;overflow:hidden;margin:12px 0 17px}
+.bar > div{height:100%;background:linear-gradient(90deg,#59d4b8,#f6cd7f);transition:width .35s}
+.map-list{display:grid;gap:14px;margin-top:22px}
+.map-item{display:flex;align-items:center;gap:10px;color:#b4c5da}.map-item .number{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;border:1px solid #45607a;background:#1e324e;font-weight:800;flex:none}.map-item.done{color:#b5f1cc}.map-item.done .number{background:rgba(61,169,104,.15);border-color:#4ea67e}.map-item.active{color:#fff;font-weight:800}.map-item.active .number{background:#f4c779;color:#16253a;border-color:#f4c779}
+.sidebar h3{font-size:1.05rem;margin:0 0 7px}.mini-note{margin-top:26px;border-top:1px solid var(--line);padding-top:18px;font-size:.9rem;color:var(--muted)}
+.result{max-width:780px;margin:28px auto 70px;text-align:center;padding:36px 28px;position:relative;overflow:hidden}
+.result::before{content:"";position:absolute;inset:auto;top:-120px;left:50%;transform:translateX(-50%);width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(247,200,115,.16),transparent 70%)}
+.result h1{font:700 clamp(2.5rem,6vw,4rem)/1.1 Georgia,serif;margin:12px 0}.result .medal{font-size:4.5rem}.result p{max-width:560px;margin:0 auto 20px;color:#d5e1ee}.result .summary{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:430px;margin:26px auto}.summary-item{border:1px solid var(--line);border-radius:14px;padding:17px}.summary-item b{display:block;font-size:1.55rem;color:var(--gold)}
+.footer{border-top:1px solid var(--line);color:#95a9c2;font-size:.8rem;padding:15px 0 28px;position:relative;z-index:1}.footer span+span{margin-left:14px}
+.two-input{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}.field{display:grid;gap:5px;color:#d3e1f0;font-weight:700}.field .answer-input{width:160px}.help-reason{color:var(--muted);font-size:.86rem;margin-top:8px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.math-text{paint-order:stroke;stroke:rgba(10,16,26,.35);stroke-width:6px;stroke-linejoin:round}
+/* Game feel: vrata, ključevi, pobedničke nagrade */
+.header-tools{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.audio-controls{display:flex;gap:6px;flex-wrap:wrap}
+.audio-btn{border:1px solid rgba(202,224,245,.23);background:rgba(22,42,65,.86);color:#e0edf8;border-radius:11px;padding:8px 11px;font-size:.8rem;font-weight:800;min-height:38px}
+.audio-btn[aria-pressed="true"]{border-color:rgba(107,228,206,.58);color:#c1fff1;background:rgba(66,151,138,.17)}
+.audio-btn:active{transform:scale(.98)}
+.hero-progress{margin-bottom:24px}
+.key-inventory{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:11px 13px;margin:15px 0;background:rgba(4,18,32,.36);border:1px solid rgba(247,200,115,.23);border-radius:14px;max-width:fit-content}
+.inventory-label{font-weight:800;color:#f4dca8;font-size:.87rem;margin-right:3px}
+.key-slot{width:31px;height:31px;display:grid;place-items:center;font-size:1.15rem;border-radius:9px;border:1px solid rgba(195,215,237,.18);background:rgba(255,255,255,.04);color:#718aa7}
+.key-slot.earned{border-color:rgba(247,200,115,.68);background:rgba(247,200,115,.12);color:#ffe4a6;box-shadow:0 0 12px rgba(247,200,115,.10)}
+.key-inventory b{font-size:.88rem;color:#f7d493;margin-left:4px;white-space:nowrap}
+.room-scene{border-radius:18px;overflow:hidden;margin:16px 0 20px;border:1px solid rgba(173,214,243,.24);background:#13273f;position:relative;box-shadow:inset 0 0 22px rgba(0,0,0,.25)}
+.room-scene svg{width:100%;height:auto;display:block;max-height:260px}
+.scene-caption{position:absolute;left:11px;right:11px;bottom:9px;text-align:center;font-size:.78rem;line-height:1.35;font-weight:800;padding:6px 10px;border:1px solid rgba(255,255,255,.16);background:rgba(7,18,31,.87);border-radius:10px;color:#dbeaf9;max-width:fit-content;margin:0 auto;backdrop-filter:blur(4px)}
+.room-scene.scene-unlocked{border-color:rgba(107,228,206,.6);box-shadow:0 0 26px rgba(107,228,206,.12)}
+.gate-left,.gate-right{transition:transform 1.05s cubic-bezier(.23,.69,.2,1)}
+.door-panels-open .gate-left,.scene-unlocked .gate-left{transform:translateX(-55px)}
+.door-panels-open .gate-right,.scene-unlocked .gate-right{transform:translateX(55px)}
+.door-lock{transition:opacity .42s,transform .6s;transform-origin:260px 156px}
+.door-lock-open,.scene-unlocked .door-lock{opacity:0;transform:scale(.4) rotate(20deg)}
+.torch{transform-origin:center 140px;animation:torchFlicker 1.2s ease-in-out infinite alternate}
+.torch-right{animation-delay:.4s}
+.scene-smoke{animation:sceneMist 9s ease-in-out infinite}
+.scene-stars{animation:twinkle 2.2s ease-in-out infinite}
+.room-emblem{animation:runePulse 2.8s ease-in-out infinite}
+.door-done{padding:12px;border:1px solid rgba(107,228,206,.38);border-radius:12px;color:#b7ffeb;background:rgba(107,228,206,.08);font-weight:700}
+.key-reward{display:flex;align-items:center;gap:14px;margin:16px 0 4px;padding:14px;background:rgba(247,200,115,.11);border-radius:16px;border:1px solid rgba(247,200,115,.32)}
+.key-reward b,.key-reward span{display:block}.key-reward span{font-size:.87rem;color:#f5e7ca;margin-top:4px}
+.reward-key{width:64px;height:64px;flex:none;filter:drop-shadow(0 4px 12px rgba(247,200,115,.45));animation:keyFloat 2.1s ease-in-out infinite}
+.reward-key svg{width:100%;height:100%}
+.unlock-controls{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.door-message{font-weight:700;color:#b9f4dc;margin:15px 0 10px}
+.trophy-wrap{margin:0 auto 6px;width:155px;height:155px;position:relative;filter:drop-shadow(0 5px 28px rgba(255,210,111,.32));animation:trophyHover 3.7s ease-in-out infinite}
+.trophy-graphic{display:block;width:100%;height:100%}
+.awards{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:24px auto 10px}
+.award{flex:1 1 165px;max-width:220px;min-width:150px;border:1px solid rgba(247,200,115,.33);background:rgba(247,200,115,.08);padding:13px 12px;border-radius:16px;text-align:center;font-size:1.35rem}
+.award b{display:block;font-size:.89rem;color:#ffdda0}.award small{display:block;font-size:.76rem;color:#c2d1e1;margin-top:6px}
+.win-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.win-panel .key-inventory{margin:18px auto 0}
+.confetti{position:absolute;top:-22px;left:var(--x);width:8px;height:16px;background:#f9d18c;border-radius:2px;opacity:0;pointer-events:none;animation:confettiFall var(--dur) linear var(--delay) infinite;transform:rotate(var(--rotation))}
+.confetti:nth-child(3n){background:#7fe2c9}.confetti:nth-child(4n){background:#f4aeb8}
+@keyframes torchFlicker{0%{opacity:.84;transform:scale(.97)}100%{opacity:1;transform:scale(1.035)}}
+@keyframes sceneMist{0%,100%{transform:translateX(-12px)}50%{transform:translateX(18px)}}
+@keyframes keyFloat{0%,100%{transform:translateY(0) rotate(-9deg)}50%{transform:translateY(-9px) rotate(3deg)}}
+@keyframes trophyHover{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes confettiFall{0%{transform:translateY(-15px) rotate(var(--rotation));opacity:0}12%{opacity:.85}90%{opacity:.85}100%{transform:translateY(470px) rotate(440deg);opacity:0}}
+@media(max-width:760px){.topbar{align-items:flex-start;flex-wrap:wrap}.header-tools{width:100%;justify-content:space-between;gap:8px}.top-tag{order:-1}.audio-btn{min-height:42px}.room-scene svg{min-height:160px}.scene-caption{font-size:.72rem;bottom:7px}.key-inventory{gap:5px;padding:8px 9px}.inventory-label{width:100%}.key-slot{width:28px;height:28px}.reward-key{width:52px;height:52px}.unlock-controls .btn{width:100%}.win-panel .awards{display:grid;grid-template-columns:1fr 1fr}.win-panel .award{min-width:0;width:100%}.trophy-wrap{width:132px;height:132px}}
+@media(max-width:920px){.hero{grid-template-columns:1fr;min-height:auto;gap:8px;padding:32px 0 50px}.illustration{order:-1;min-height:250px}.illustration svg{max-height:300px}.game-layout{grid-template-columns:1fr}.sidebar{position:static;order:-1;padding:18px}.sidebar .map-list{grid-template-columns:repeat(5,1fr);gap:6px;margin-top:13px}.map-item{display:block;text-align:center;font-size:.69rem}.map-item .number{margin:auto auto 6px}.sidebar .mini-note{display:none}.main-panel{min-height:unset}.room-heading{font-size:2.25rem}.top-tag{font-size:.72rem}.choice-grid{grid-template-columns:1fr}.explain-grid{grid-template-columns:1fr}.tablet{max-width:460px;margin:0 auto}}
+@media(max-width:760px){.visual-box{padding:10px}.answer-form .answer-input{flex:1;min-width:130px}.two-input .field{width:100%}.two-input .field .answer-input{width:100%}.two-input .btn{width:100%}}
+@media(max-width:420px){.brand small{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+@keyframes portalPulse{0%,100%{opacity:.75;filter:drop-shadow(0 0 0 rgba(107,228,206,.05))}50%{opacity:1;filter:drop-shadow(0 0 14px rgba(107,228,206,.35))}}
+@keyframes twinkle{0%,100%{opacity:.35;transform:scale(.95)}50%{opacity:1;transform:scale(1.14)}}
+@keyframes drift{0%{transform:translateX(-12px)}50%{transform:translateX(16px)}100%{transform:translateX(-12px)}}
+@keyframes floatTemple{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes shadowPulse{0%,100%{opacity:.34;transform:scaleX(1)}50%{opacity:.48;transform:scaleX(1.06)}}
+@keyframes runePulse{0%,100%{opacity:.78}50%{opacity:1;filter:drop-shadow(0 0 8px rgba(255,219,150,.5))}}
+@keyframes chipPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@keyframes glowShift{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+
+/* Različite filmske scene umesto jedne iste kapije u svakoj prostoriji */
+.room-scene{border-color:rgba(157,197,220,.36);box-shadow:inset 0 0 42px rgba(0,0,0,.27),0 12px 26px rgba(0,0,0,.17);margin-top:12px}
+.room-scene svg{max-height:none;min-height:200px}
+.room-scene .scene-caption{max-width:calc(100% - 24px);bottom:12px;font-size:.82rem;background:rgba(4,15,29,.85);padding:7px 13px}
+.room-scene.scene-solved{border-color:rgba(247,200,115,.78)}
+.scene-frame-title{position:absolute;top:12px;left:12px;z-index:2;padding:7px 11px;border:1px solid rgba(245,210,145,.3);border-radius:10px;background:rgba(5,18,33,.77);color:#ffe2a9;font-size:.76rem;letter-spacing:.08em;font-weight:850;text-transform:uppercase;pointer-events:none}
+.scene-svg .scene-stars{transform-origin:310px 120px;animation:twinkle 3.8s ease-in-out infinite}
+.scene-svg .water-foam{animation:streaming 8s linear infinite}
+.scene-svg .fire{transform-box:fill-box;transform-origin:50% 95%;animation:torchFlicker .85s ease-in-out infinite alternate}
+.scene-svg .lamp-glow{animation:portalPulse 2.8s ease-in-out infinite}
+.scene-svg .bridge-built{opacity:.42;transform:translateY(18px);transition:transform 1.4s cubic-bezier(.19,1,.22,1),opacity 1s}
+.scene-solved .scene-svg .bridge-built,.scene-unlocked .scene-svg .bridge-built{opacity:1;transform:translateY(0)}
+.scene-svg .bridge-glow{opacity:.25;transition:opacity .8s}
+.scene-solved .scene-svg .bridge-glow,.scene-unlocked .scene-svg .bridge-glow{opacity:1}
+.scene-svg .mast-rise{transform:translateY(18px);opacity:.6;transition:transform 1.15s,opacity 1.15s}
+.scene-solved .scene-svg .mast-rise,.scene-unlocked .scene-svg .mast-rise{transform:translateY(0);opacity:1}
+.scene-svg .crystal-core{transform-origin:310px 147px;animation:crystalBreath 3.5s ease-in-out infinite}
+.scene-svg .crystal-ray{opacity:.07;transition:opacity 1.2s}
+.scene-solved .scene-svg .crystal-ray,.scene-unlocked .scene-svg .crystal-ray{opacity:1;animation:runePulse 1.9s ease-in-out infinite}
+.scene-svg .floor-rune{transform-origin:310px 169px;transition:transform 1.6s cubic-bezier(.17,.75,.25,1)}
+.scene-solved .scene-svg .floor-rune,.scene-unlocked .scene-svg .floor-rune{transform:rotate(22deg)}
+.scene-svg .floor-beam{opacity:.35;transition:opacity 1.3s}
+.scene-solved .scene-svg .floor-beam,.scene-unlocked .scene-svg .floor-beam{opacity:1}
+.scene-svg .gate-rise{transition:transform 1.35s cubic-bezier(.2,.7,.3,1)}
+.scene-unlocked .scene-svg .gate-rise{transform:translateY(-176px)}
+.scene-svg .stone-door-left,.scene-svg .stone-door-right{transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.scene-unlocked .scene-svg .stone-door-left{transform:translateX(-48px)}
+.scene-unlocked .scene-svg .stone-door-right{transform:translateX(48px)}
+.scene-svg .seal-lock{transition:opacity .6s,transform .7s;transform-origin:310px 169px}
+.scene-unlocked .scene-svg .seal-lock{opacity:0;transform:scale(.3)}
+.scene-svg .bridge-end{opacity:.98}
+.mission-ribbon{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:9px 0 16px}
+.mission-ribbon .mission-type{display:inline-flex;border-radius:999px;background:rgba(247,200,115,.12);border:1px solid rgba(247,200,115,.32);color:#ffe6af;padding:5px 12px;font-size:.84rem;font-weight:750}
+.mission-ribbon small{color:#b7cadf}
+.visual-box{background:radial-gradient(circle at 50% 42%,#284767 0%,#14263f 76%)}
+.visual-box svg{max-height:340px;width:min(100%,570px)}
+.diagram-note{font-size:.86rem}
+.math-focus{margin-top:13px;display:flex;align-items:center;gap:9px;color:#afc8d7;font-size:.88rem}
+.math-focus span{width:9px;height:9px;border-radius:50%;background:#6be4ce;flex:none}
+@keyframes streaming{from{transform:translateX(-35px)}to{transform:translateX(25px)}}
+@keyframes crystalBreath{0%,100%{filter:drop-shadow(0 0 1px rgba(107,228,206,.1));transform:scale(.98)}50%{filter:drop-shadow(0 0 20px rgba(107,228,206,.55));transform:scale(1.04)}}
+@media(max-width:760px){.room-scene svg{min-height:185px}.room-scene .scene-caption{font-size:.70rem;bottom:6px;padding:5px 8px}.scene-frame-title{top:7px;left:7px;font-size:.61rem;padding:5px 7px}.visual-box{padding:9px}.visual-box svg{max-height:290px}.mission-ribbon{margin:6px 0 12px}}
+@media(prefers-reduced-motion:reduce){.scene-svg .scene-stars,.scene-svg .water-foam,.scene-svg .fire,.scene-svg .lamp-glow,.scene-svg .crystal-core,.scene-svg .crystal-ray{animation:none!important}}
+
+@media(max-width:920px){
+ .game-layout .sidebar{order:2}
+ .game-layout .main-panel{order:1}
+ .sidebar .map-list{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .sidebar .map-item{min-width:0}
+ .sidebar .map-item span{display:block;overflow-wrap:anywhere;word-break:normal;font-size:.64rem;line-height:1.25}
+}
+@media(max-width:760px){
+ .room-scene svg{width:100%;height:250px;min-height:250px;max-height:none}
+ .room-scene .scene-caption{bottom:8px}
+ .room-scene{margin-top:11px;margin-bottom:16px}
+}
+@media(max-width:365px){
+ .room-scene svg{height:235px;min-height:235px}
+ .sidebar .map-item span{font-size:.58rem}
+ .topbar .audio-btn{font-size:.72rem;padding:7px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+  <div class="brand"><div class="brand-symbol">△</div><div>HRAM PITAGORE<br><small style="font-weight:500;color:#a3b7d1;font-size:.72rem">MATEMATIČKA AVANTURA</small></div></div>
+  <div class="header-tools">
+    <div class="audio-controls" role="group" aria-label="Zvučna podešavanja">
+      <button id="effectsToggle" class="audio-btn" type="button" aria-pressed="true">🔊 Efekti</button>
+      <button id="musicToggle" class="audio-btn" type="button" aria-pressed="false">♫ Muzika</button>
+    </div>
+    <div class="top-tag">7. razred · v1.3</div>
+  </div>
+</header>
+<main id="app"></main>
+<footer class="footer"><span>Nezavisan obrazovni projekat · Pilot verzija 1.3</span><span>Bez naloga, oglasa i slanja podataka</span></footer>
+</div>
+<script>
+(()=>{'use strict';
+const KEY='hram-pitagore-save-v13';
+
+const SOUND_KEY='hram-pitagore-audio-v1';
+const rooms=[
+ {
+  shape:'Pravougli trougao',title:'Preko provalije',short:'Provalija',eyebrow:'PRVA PROSTORIJA · PRAVOUGLI TROUGAO',
+  description:'Pred tobom su dve odvojene stene i prekinut drveni most. Da bi graditelji postavili novo uže koje drži most, pronađi njegovu dužinu. Dve poznate staze grade pravi ugao.',
+  question:'Koliko metara treba da bude dugačko glavno uže mosta?',type:'number',expected:[10],
+  diagramNote:'Pravougli trougao: katete su 6 m i 8 m, uže je hipotenuza. Skica nije u razmeri.',
+  ambience:['Drveni most nad provalijom','Uže otvara prvi prelaz'],
+  hintIntro:'Pronađi hipotenuzu: počni od standardne formule, uvrsti obe katete i rešavaj jednačinu.',
+  success:'Glavno uže ima 10 m. Drvene daske mosta spuštaju se na svoje mesto!',
+  steps:['a² + b² = c²','6² + 8² = c²','36 + 64 = c²','100 = c²','c² = 100','c = 10'],
+  stepNotes:['Standardna Pitagorina teorema.','Katete su a = 6 i b = 8.','Izračunaj kvadrate.','Saberi levu stranu.','Napiši jednačinu za c.','Dužina je pozitivna: c = 10 m.'],
+  boardTitle:'Tabla graditelja',boardCaption:'Izračunata hipotenuza određuje dužinu užeta.'
+ },
+ {
+  shape:'Jednakokraki trougao',title:'Most blizanaca',short:'Blizanci',eyebrow:'DRUGA PROSTORIJA · JEDNAKOKRAKI TROUGAO',
+  description:'Drugi most drže dva jednaka kosa nosača, svaki dug 13 m. Njihova uporišta su udaljena 10 m. Visina središnjeg stuba otkriva kako da podigneš most.',
+  question:'Kolika je visina središnjeg stuba (u metrima)?',type:'number',expected:[12],
+  diagramNote:'Visina na osnovicu jednakokrakog trougla deli osnovicu od 10 m na dva dela od po 5 m.',
+  ambience:['Dva jednaka nosača od 13 m','Most se podiže kad pronađeš visinu'],
+  hintIntro:'Prvo visinom podeli jednakokraki trougao na dva pravougla. Jedna kateta je polovina osnovice, a hipotenuza je krak.',
+  success:'Središnji stub mora imati 12 m. Nosači se zatežu i most je stabilan!',
+  steps:['a² + b² = c²','5² + h² = 13²','25 + h² = 169','h² = 169 − 25','h² = 144','h = 12'],
+  stepNotes:['Počni od standardne formule.','Polovina osnovice je 5 m; krak je 13 m.','Izračunaj kvadrate.','Oduzmi 25 od obe strane jednačine.','Dobijaš kvadrat visine.','Pošto je 12² = 144, visina je 12 m.'],
+  boardTitle:'Tabla mosta blizanaca',boardCaption:'Visina deli jednakokraki trougao na dva pravougla.'
+ },
+ {
+  shape:'Jednakostranični trougao',title:'Piramida svetlosti',short:'Piramida',eyebrow:'TREĆA PROSTORIJA · JEDNAKOSTRANIČNI TROUGAO',
+  description:'Na kapiji stoji jednakostranični kameni simbol stranice 8 m. Njegov centralni svetlosni zrak ide visinom trougla. Tačan izraz pokreće kristal.',
+  question:'Kolika je visina jednakostraničnog trougla?',type:'choice',correct:'4√3',
+  choices:[['4√3 m','4√3'],['8√2 m','8√2'],['4 m','4'],['8 m','8']],
+  diagramNote:'Visina jednakostraničnog trougla deli osnovicu od 8 m na dva dela od po 4 m.',
+  ambience:['Tri jednake stranice od 8 m','Kristal se pali tek na tačan izraz'],
+  hintIntro:'Visina jednakostraničnog trougla deli ga na dva podudarna pravougla trougla. Hipotenuza je 8 m, a kateta uz osnovicu 4 m.',
+  success:'Visina je 4√3 m. Kristal piramide oslobađa tri svetlosna zraka!',
+  steps:['a² + b² = c²','4² + h² = 8²','16 + h² = 64','h² = 64 − 16','h² = 48','h = √48 = 4√3'],
+  stepNotes:['Počni od Pitagorine teoreme.','Pola osnovice je 4 m, stranica je 8 m.','Izračunaj kvadrate.','Oduzmi 16 od obe strane.','Kvadrat visine je 48.','Razloži 48 = 16·3; rezultat ostaje u tačnom obliku.'],
+  boardTitle:'Tabla svetlosnog kristala',boardCaption:'Sačuvaj tačan izraz; ne zaokružuj koren.'
+ },
+ {
+  shape:'Kvadrat',title:'Kvadratna dvorana',short:'Kvadrat',eyebrow:'ČETVRTA PROSTORIJA · KVADRAT',
+  description:'Pod dvorane je kvadrat stranice 7 m. Dijagonalna zlatna linija povezuje suprotne uglove i aktivira pokretnu platformu. Treba ti njena tačna dužina.',
+  question:'Koja je dužina dijagonale kvadrata?',type:'choice',correct:'7√2',
+  choices:[['7√2 m','7√2'],['14 m','14'],['49 m','49'],['√7 m','√7']],
+  diagramNote:'Dijagonala kvadrata deli kvadrat na dva pravougla trougla sa katetama od po 7 m.',
+  ambience:['Zlatna dijagonala preko poda','Kvadratna platforma se pokreće'],
+  hintIntro:'Povuci dijagonalu i uoči pravougli trougao. Dve stranice kvadrata su katete, a dijagonala je hipotenuza.',
+  success:'Dijagonala je 7√2 m. Zlatni pod se okreće i otkriva prolaz!',
+  steps:['a² + b² = c²','7² + 7² = d²','49 + 49 = d²','98 = d²','d = √98','d = 7√2'],
+  stepNotes:['Počni od standardnog oblika; hipotenuzu označi sa d.','Obe katete imaju po 7 m.','Kvadrati su 49 i 49.','Saberi: d² = 98.','Dužina je pozitivan koren.','√98 = √(49·2) = 7√2.'],
+  boardTitle:'Tabla kvadratne dvorane',boardCaption:'Dijagonala ostaje u tačnom korenskom zapisu.'
+ },
+ {
+  shape:'Pravougaonik',title:'Poslednja kapija',short:'Kapija',eyebrow:'PETA PROSTORIJA · PRAVOUGAONIK',
+  description:'Završna bronzana kapija ima oblik pravougaonika, širokog 12 m i visokog 9 m. Dva brojčanika traže dijagonalu i obim. Obe vrednosti su potrebne za oslobađanje kapije.',
+  question:'Upiši dijagonalu i obim pravougaonika (u metrima).',type:'double',expected:[15,42],
+  diagramNote:'Dijagonala pravougaonika sa stranicama 12 m i 9 m je hipotenuza pravouglog trougla.',
+  ambience:['Bronzana vrata sa dva brojčanika','Dijagonala i obim otvaraju izlaz'],
+  hintIntro:'Najpre Pitagorinom teoremom izračunaj dijagonalu. Zatim saberi dužine sve četiri stranice pravougaonika.',
+  success:'Dijagonala je 15 m, a obim 42 m. Dva brojčanika zasvetlela su i vrata se podižu!',
+  steps:['a² + b² = c²','12² + 9² = d²','144 + 81 = d²','225 = d²','d = 15','O = 2·(12 + 9) = 42'],
+  stepNotes:['Počni od standardnog oblika.','Stranice su katete; d je hipotenuza.','Izračunaj kvadrate stranica.','Saberi i dobijaš d² = 225.','Pozitivan koren je 15 m.','Obim je zbir sve četiri stranice: 42 m.'],
+  boardTitle:'Tabla poslednje kapije',boardCaption:'Za otvaranje potrebne su dve različite veličine.'
+ }
+];
+let state={index:0,hints:0,solved:0,stage:'locked'};
+try{
+  const saved=JSON.parse(localStorage.getItem(KEY));
+  if(saved&&Number.isInteger(saved.index)&&saved.index>=0&&saved.index<=5){
+    state={index:saved.index,hints:Number.isInteger(saved.hints)?saved.hints:0,solved:saved.index,stage:saved.stage==='open'?'open':'locked'};
+  }
+}catch(e){}
+let view='home',showHint=false,feedback=null;
+const app=document.getElementById('app');
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}};
+let soundPrefs={effects:true,music:false};
+try{
+  const stored=JSON.parse(localStorage.getItem(SOUND_KEY));
+  if(stored&&typeof stored.effects==='boolean'&&typeof stored.music==='boolean')soundPrefs=stored;
+}catch(e){}
+const savePrefs=()=>{try{localStorage.setItem(SOUND_KEY,JSON.stringify(soundPrefs))}catch(e){}};
+const AudioCtor=window.AudioContext||window.webkitAudioContext;
+let audioCtx=null,musicTimer=null,musicStep=0;
+function ensureAudio(){
+  if(!AudioCtor)return false;
+  try{if(!audioCtx)audioCtx=new AudioCtor();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});return true;}catch(e){return false}
+}
+function tone(freq,start,duration,volume=.035,type='sine',destination){
+  if(!audioCtx||audioCtx.state==='closed')return;
+  const osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),out=destination||audioCtx.destination;
+  osc.type=type;osc.frequency.setValueAtTime(freq,start);
+  gain.gain.setValueAtTime(.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(volume,.0002),start+.025);
+  gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  osc.connect(gain);gain.connect(out);
+  osc.start(start);osc.stop(start+duration+.04);
+  osc.onended=()=>{osc.disconnect();gain.disconnect()};
+}
+function sfx(name){
+  if(!soundPrefs.effects||!ensureAudio())return;
+  const t=audioCtx.currentTime+.02;
+  if(name==='click')tone(440,t,.09,.022,'triangle');
+  else if(name==='hint'){tone(523.25,t,.16,.03,'sine');tone(659.25,t+.12,.23,.023,'sine')}
+  else if(name==='error'){tone(260,t,.15,.022,'triangle');tone(196,t+.11,.22,.019,'triangle')}
+  else if(name==='correct'){tone(440,t,.15,.03,'triangle');tone(554.37,t+.10,.19,.033,'triangle');tone(659.25,t+.23,.30,.038,'sine')}
+  else if(name==='key'){tone(660,t,.12,.032,'sine');tone(880,t+.10,.13,.033,'sine');tone(1174.7,t+.23,.34,.033,'sine')}
+  else if(name==='door'){
+    for(let i=0;i<5;i++)tone(110+i*18,t+i*.12,.4,.018,'sawtooth');
+    tone(523,t+.55,.46,.028,'sine');
+  }else if(name==='start'){tone(293.66,t,.22,.025,'triangle');tone(440,t+.16,.35,.025,'sine')}
+  else if(name==='victory'){
+    [392,523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,t+i*.13,.5,.035,'triangle'));
+    tone(261.63,t+.68,1.1,.028,'sine');
+  }
+}
+// Originalna ambijentalna kompozicija generisana direktno u pregledaču;
+// bez eksternih audio fajlova i bez tuđe muzike.
+function musicPhrase(){
+  if(!soundPrefs.music||document.hidden||!ensureAudio())return;
+  const roots=[146.83,116.54,174.61,130.81],root=roots[musicStep%roots.length],t=audioCtx.currentTime+.05;
+  const intervals=[1,1.2,1.5];
+  intervals.forEach((ratio,i)=>tone(root*ratio,t+i*.09,2.65,.0048,'sine'));
+  tone(root*2,t+.45,1.35,.009,'triangle');
+  tone(root*3,t+1.52,.78,.005,'sine');
+  musicStep++;
+}
+function stopMusic(){if(musicTimer!==null){clearInterval(musicTimer);musicTimer=null}}
+function startMusic(){
+  stopMusic();
+  if(!soundPrefs.music||document.hidden||!ensureAudio())return;
+  musicPhrase();musicTimer=setInterval(musicPhrase,2900);
+}
+function renderAudioControls(){
+  const effects=document.getElementById('effectsToggle'),music=document.getElementById('musicToggle');
+  if(!effects||!music)return;
+  effects.textContent=soundPrefs.effects?'🔊 Efekti: ON':'🔇 Efekti: OFF';
+  music.textContent=soundPrefs.music?'♫ Muzika: ON':'♫ Muzika: OFF';
+  effects.setAttribute('aria-pressed',String(soundPrefs.effects));
+  music.setAttribute('aria-pressed',String(soundPrefs.music));
+  const disabled=!AudioCtor;
+  effects.disabled=disabled;music.disabled=disabled;
+  if(disabled){effects.title='Pregledač ne podržava Web Audio';music.title='Pregledač ne podržava Web Audio'}
+}
+document.getElementById('effectsToggle').addEventListener('click',()=>{
+  soundPrefs.effects=!soundPrefs.effects;savePrefs();renderAudioControls();if(soundPrefs.effects)sfx('click');
+});
+document.getElementById('musicToggle').addEventListener('click',()=>{
+  soundPrefs.music=!soundPrefs.music;savePrefs();renderAudioControls();
+  if(soundPrefs.music)startMusic();else stopMusic();
+});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)stopMusic();else if(soundPrefs.music)startMusic();
+});
+// Ne pokreći muziku pri učitavanju stranice pre prvog korisničkog dodira.
+function activateSound(){if(soundPrefs.music)startMusic()}
+renderAudioControls();
+const esc=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const normalize=(v)=>String(v).trim().replace(',','.');
+const isNumEqual=(input,expected)=>{
+  const n=Number(normalize(input));
+  return Number.isFinite(n)&&Math.abs(n-expected)<1e-9;
+};
+function templeSVG(){
+  return `<svg viewBox="0 0 520 460" role="img" aria-label="Svetleći antički hram sa animiranim portalom">
+    <defs>
+      <linearGradient id="stone" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#6f90aa"/><stop offset="1" stop-color="#203c58"/></linearGradient>
+      <linearGradient id="stone2" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#9cb0bf"/><stop offset="1" stop-color="#5b748a"/></linearGradient>
+      <linearGradient id="portal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#90f0d9"/><stop offset="1" stop-color="#2f8596"/></linearGradient>
+      <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="rgba(107,228,206,.55)"/><stop offset="1" stop-color="rgba(107,228,206,0)"/></radialGradient>
+    </defs>
+    <ellipse class="temple-shadow" cx="260" cy="420" rx="150" ry="22" fill="rgba(0,0,0,.28)"/>
+    <g class="mist-1" fill="rgba(255,255,255,.08)">
+      <ellipse cx="130" cy="370" rx="70" ry="18"/>
+      <ellipse cx="398" cy="350" rx="64" ry="16"/>
+    </g>
+    <g class="mist-2" fill="rgba(107,228,206,.08)">
+      <ellipse cx="280" cy="395" rx="95" ry="24"/>
+    </g>
+    <g class="temple-wrap">
+      <circle class="portal-glow" cx="260" cy="200" r="160" fill="url(#halo)" opacity=".24"/>
+      <g fill="#d6e5ef" opacity=".82">
+        <circle class="star" cx="70" cy="72" r="2.4"/>
+        <circle class="star s2" cx="430" cy="92" r="3"/>
+        <circle class="star s3" cx="462" cy="266" r="2.2"/>
+        <circle class="star s4" cx="112" cy="286" r="2.3"/>
+        <circle class="star s5" cx="364" cy="38" r="2.5"/>
+      </g>
+      <path d="M68 180 L260 40 452 180Z" fill="url(#stone)" stroke="#afc2d2" stroke-width="3"/>
+      <path d="M103 176h314v28H103z" fill="url(#stone2)" stroke="#b5c4d0" stroke-width="1"/>
+      <rect x="118" y="205" width="284" height="168" fill="#2e4963" stroke="#7694ac" stroke-width="2" rx="2"/>
+      <g fill="url(#stone)" stroke="#8aa6b8" stroke-width="2">
+        <rect x="132" y="212" width="38" height="160" rx="2"/>
+        <rect x="190" y="212" width="38" height="160" rx="2"/>
+        <rect x="292" y="212" width="38" height="160" rx="2"/>
+        <rect x="350" y="212" width="38" height="160" rx="2"/>
+      </g>
+      <g>
+        <path class="portal-door" d="M231 369V282a29 29 0 0 1 58 0v87" fill="url(#portal)" stroke="#f5cf87" stroke-width="6"/>
+        <path d="M224 367V281a36 36 0 0 1 72 0v86" fill="none" stroke="#dbc488" stroke-width="3"/>
+      </g>
+      <text class="rune" x="260" y="156" text-anchor="middle" font-size="48" fill="#ffdb96" font-family="Georgia">△</text>
+      <g fill="#4f6e85" stroke="#90adbe">
+        <rect x="86" y="376" width="348" height="18" rx="4"/>
+        <rect x="69" y="396" width="382" height="18" rx="4"/>
+        <rect x="50" y="416" width="420" height="18" rx="4"/>
+      </g>
+      <g fill="#ffd993" opacity=".92">
+        <circle class="star s3" cx="156" cy="242" r="2.2"/>
+        <circle class="star s4" cx="362" cy="248" r="2.2"/>
+      </g>
+    </g>
+  </svg>`;
+}
+function diagSVG(room){
+ const n=state.index;
+ const text=(x,y,str,color='#eaf6ff',size=22,anchor='middle',rotate='')=>`<text class="math-text" x="${x}" y="${y}" fill="${color}" font-size="${size}" text-anchor="${anchor}" font-weight="800" ${rotate}>${str}</text>`;
+ const top=`<svg viewBox="38 0 465 310" role="img" aria-label="Matematička skica: ${esc(room.shape)}"><g stroke-linejoin="round" stroke-linecap="round">`;
+ const bottom=`</g></svg>`;
+ const angle=(x,y)=>`<path d="M${x} ${y-22}h22v22" stroke="#f7c873" stroke-width="3" fill="none"/>`;
+ if(n===0)return top+`<path d="M176 245L335 245L335 32Z" fill="rgba(104,232,200,.11)" stroke="#91e6d0" stroke-width="5"/>${angle(313,245)}${text(255,281,'6 m')}${text(354,152,'8 m','#eaf6ff',21,'start')}${text(235,132,'c = ?','#ffe5a4',23,'middle','transform="rotate(-52 235 132)"')}<circle cx="176" cy="245" r="5" fill="#e5c47c"/><circle cx="335" cy="245" r="5" fill="#e5c47c"/>`+bottom;
+ if(n===1)return top+`<path d="M180 246L270 37L360 246Z" fill="rgba(104,232,200,.12)" stroke="#91e6d0" stroke-width="5"/><path d="M270 37V246" stroke="#f7c873" stroke-width="3" stroke-dasharray="9 7"/>${angle(270,246)}<path d="M190 147l15 9-9 14M333 147l-15 9 9 14" stroke="#ffe5a4" stroke-width="3" fill="none"/>${text(170,128,'13 m','#eaf6ff',20,'middle','transform="rotate(-59 170 128)"')}${text(365,128,'13 m','#eaf6ff',20,'middle','transform="rotate(59 365 128)"')}${text(224,282,'5 m')}${text(316,282,'5 m')}${text(289,151,'h = ?','#ffe5a4',23,'start')}`+bottom;
+ if(n===2)return top+`<path d="M144 246L270 30L396 246Z" fill="rgba(104,232,200,.13)" stroke="#91e6d0" stroke-width="5"/><path d="M270 30V246" stroke="#f7c873" stroke-width="3" stroke-dasharray="9 7"/>${angle(270,246)}${text(184,123,'8 m','#eaf6ff',20,'middle','transform="rotate(-59 184 123)"')}${text(353,123,'8 m','#eaf6ff',20,'middle','transform="rotate(59 353 123)"')}${text(208,282,'4 m')}${text(335,282,'4 m')}${text(288,159,'h = ?','#ffe5a4',23,'start')}<g stroke="#f7c873" stroke-width="3"><path d="M204 143l12 7M328 143l-12 7M263 246v-15"/></g>`+bottom;
+ if(n===3)return top+`<rect x="171" y="49" width="199" height="199" rx="2" fill="rgba(104,232,200,.12)" stroke="#91e6d0" stroke-width="5"/><path d="M171 248L370 49" stroke="#f7c873" stroke-width="4" stroke-dasharray="10 7"/>${angle(171,248)}${text(270,284,'7 m')}${text(391,154,'7 m','#eaf6ff',20,'start')}${text(267,143,'d = ?','#ffe5a4',23,'middle','transform="rotate(-45 267 143)"')}`+bottom;
+ return top+`<rect x="146" y="57" width="267" height="194" rx="2" fill="rgba(104,232,200,.13)" stroke="#91e6d0" stroke-width="5"/><path d="M146 251L413 57" stroke="#f7c873" stroke-width="4" stroke-dasharray="10 7"/>${angle(146,251)}${text(280,287,'12 m')}${text(435,157,'9 m','#eaf6ff',20,'start')}${text(276,142,'d = ?','#ffe5a4',23,'middle','transform="rotate(-36 276 142)"')}`+bottom;
+}
+function sceneCommon(n){
+ const palettes=[['#081c30','#325e72'],['#10223b','#39657b'],['#0e1537','#414777'],['#111d36','#33546e'],['#101b30','#425978']];
+ const [dark,light]=palettes[n];
+ return `<defs>
+  <linearGradient id="bg${n}" x1="0" x2=".1" y1="0" y2="1"><stop stop-color="${light}"/><stop offset="1" stop-color="${dark}"/></linearGradient>
+  <linearGradient id="stone${n}" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#7892a5"/><stop offset="1" stop-color="#253c56"/></linearGradient>
+  <linearGradient id="wood${n}" x1="0" x2=".3" y1="0" y2="1"><stop stop-color="#e8c38c"/><stop offset="1" stop-color="#6c4b37"/></linearGradient>
+  <linearGradient id="gold${n}" x1="0" x2="1"><stop stop-color="#fff0aa"/><stop offset="1" stop-color="#dfa74e"/></linearGradient>
+  <radialGradient id="shine${n}"><stop stop-color="#90f2d8" stop-opacity=".65"/><stop offset="1" stop-color="#90f2d8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="620" height="330" fill="url(#bg${n})"/>
+  <circle cx="510" cy="64" r="55" fill="url(#shine${n})" opacity=".28"/>
+  <g class="scene-stars" fill="#daf8f4" opacity=".8"><circle cx="55" cy="38" r="2.2"/><circle cx="159" cy="65" r="1.8"/><circle cx="477" cy="37" r="2.3"/><circle cx="554" cy="99" r="1.5"/></g>
+  <path d="M0 179L78 114 147 162 210 125 285 173 374 113 452 165 525 117 620 174v156H0Z" fill="#0a1f35" opacity=".45"/>
+  <g class="scene-smoke"><ellipse cx="103" cy="278" rx="136" ry="18" fill="#b7dcd7" opacity=".06"/><ellipse cx="503" cy="272" rx="122" ry="16" fill="#b7dcd7" opacity=".08"/></g>`;
+}
+function masonry(x,y){return `<g transform="translate(${x} ${y})"><rect x="-30" y="-16" width="60" height="115" rx="5" fill="#3f526c" stroke="#a0a9b5" stroke-width="3"/><path d="M-30 8H30M-30 34H30M-30 62H30M0 -16V8M-15 34V62M18 62V99" fill="none" stroke="#97a5b3" stroke-width="2" opacity=".7"/><path d="M-36 -20h72v15h-72" fill="#768a9e" stroke="#b4bdc6" stroke-width="2"/></g>`}
+function torch(x,y){return `<g transform="translate(${x} ${y})"><path d="M-8 25V65M8 25V65" stroke="#755a42" stroke-width="7"/><path class="fire" d="M0 30C-25 9-7 -3 0 -26C13 -10 24 11 0 30Z" fill="#ffc772"/><path class="fire" d="M0 19C-13 9-5 -2 0 -12C9 -5 13 12 0 19Z" fill="#ff7f45"/><circle class="lamp-glow" cy="9" r="42" fill="url(#shine0)" opacity=".3"/></g>`}
+function sceneRight(){
+ const planks=Array.from({length:14},(_,i)=>{const x=151+i*22;const y=197-10*Math.sin(Math.PI*(i+1)/15);return `<g><rect x="${x}" y="${y}" width="18" height="13" rx="2" fill="url(#wood0)" stroke="#ffe0a8" stroke-width="1.4"/><path d="M${x+4} ${y+2}h10" stroke="#6d4934" stroke-width="1.4"/></g>`}).join('');
+ return `<path d="M0 225L95 198 157 218v112H0Z" fill="#54677b" stroke="#9baab9" stroke-width="4"/><path d="M466 213L525 193 620 216v114H466Z" fill="#54677b" stroke="#9baab9" stroke-width="4"/>
+  <path d="M155 212Q309 108 469 212" fill="none" stroke="#d3b47e" stroke-width="5" stroke-dasharray="12 7" opacity=".6"/>
+  <path d="M155 212Q309 245 469 212" fill="none" stroke="#c68c55" stroke-width="5" opacity=".45"/>
+  <g class="bridge-built"><path d="M147 190Q309 160 477 190" fill="none" stroke="#dbb47b" stroke-width="5"/>${planks}<path d="M149 211Q309 250 476 211" fill="none" stroke="#9c6e48" stroke-width="3"/></g>
+  <g class="bridge-end" fill="url(#wood0)" stroke="#e7c99a" stroke-width="2"><rect x="125" y="197" width="30" height="18" rx="3"/><rect x="465" y="194" width="32" height="18" rx="3"/></g>
+  <path d="M157 195V151M469 195V151" stroke="#ad8254" stroke-width="9"/>
+  <path d="M157 152Q309 48 469 152" stroke="#edd6a4" stroke-width="4" fill="none"/>
+  <path class="bridge-glow" d="M157 151Q309 48 469 151" stroke="#80ebd1" stroke-width="4" fill="none" stroke-dasharray="11 10"/>
+  ${masonry(67,194)}${masonry(549,191)}
+  <g class="water-foam" fill="none" stroke="#6fc8d6" opacity=".38" stroke-width="3"><path d="M220 293q28 -18 56 0t56 0t56 0t56 0"/><path d="M207 313q35 -17 70 0t70 0t70 0"/></g>`;
+}
+function sceneIsosceles(){
+ const bricks=Array.from({length:12},(_,i)=>`<rect x="${130+i*31}" y="244" width="27" height="14" rx="2" fill="${i%2?'#a0b4bd':'#869ca9'}" stroke="#364f61" stroke-width="1.2"/>`).join('');
+ return `<path d="M0 266q75-36 140-14v80H0zM487 254q73-35 133-4v82H487z" fill="#475f74"/>
+ <path d="M100 260H524" stroke="#c9aa7d" stroke-width="11"/><path d="M104 250H522" stroke="#6e8596" stroke-width="17"/>${bricks}
+ <path d="M131 243L310 55L489 243" fill="none" stroke="#dcbd8b" stroke-width="12" stroke-linejoin="round"/>
+ <path d="M131 243L310 55L489 243" fill="none" stroke="#ffedb6" stroke-width="2" stroke-dasharray="7 15"/>
+ <g class="mast-rise"><path d="M310 245V54" stroke="#82ecdb" stroke-width="8"/><circle cx="310" cy="54" r="17" fill="url(#gold1)"/><path d="M310 67V240" stroke="#fff1bf" stroke-width="3" stroke-dasharray="10 10"/></g>
+ <path d="M131 243L310 55L489 243" fill="#9be0ca" opacity=".06"/>
+ <path d="M310 55L310 243" stroke="#a1e6d9" stroke-width="2" stroke-dasharray="6 7"/>
+ ${masonry(92,205)}${masonry(528,205)}
+ <g class="bridge-glow"><path d="M120 250H503" stroke="#90f6e6" stroke-width="4"/></g><g class="water-foam" stroke="#73cddd" stroke-width="3" opacity=".25"><path d="M170 305q60 -15 120 0t120 0"/></g>`;
+}
+function sceneEquilateral(){
+ return `<g fill="#40546f" stroke="#8b9bb0" stroke-width="3"><path d="M110 261L169 199 202 261Z"/><path d="M418 261L462 195 519 261Z"/></g>
+ <path d="M111 274h398v22H111z" fill="#7b8b99" stroke="#bec6ca" stroke-width="3"/><path d="M130 295h358v13H130z" fill="#445e71"/>
+ <path d="M310 34L180 260H440Z" fill="rgba(110,228,202,.11)" stroke="#d7b77b" stroke-width="12" stroke-linejoin="round"/>
+ <path d="M310 34L180 260H440Z" fill="none" stroke="#9cead8" stroke-width="3"/>
+ <path d="M310 34V260" fill="none" stroke="#a5eedf" stroke-width="4" stroke-dasharray="10 10"/>
+ <g class="crystal-ray"><path d="M310 139L310 7" stroke="#e2ffed" stroke-width="12"/><path d="M310 139L66 88" stroke="#e2ffed" stroke-width="9"/><path d="M310 139L552 88" stroke="#e2ffed" stroke-width="9"/></g>
+ <g class="crystal-core"><circle cx="310" cy="139" r="51" fill="url(#shine2)"/><path d="M310 91L345 135 310 184 275 135Z" fill="#77dcca" stroke="#ffe7b2" stroke-width="4"/><path d="M310 91v93M275 135h70" stroke="#d7fff2" stroke-width="2"/></g>
+ ${torch(75,199)}${torch(548,199)}`;
+}
+function sceneSquare(){
+ return `<path d="M67 239L310 101L553 239L310 316Z" fill="#495c73" stroke="#869cb0" stroke-width="8"/>
+ <g class="floor-rune"><path d="M310 91L446 169L310 247L174 169Z" fill="#53758c" stroke="#f5d28b" stroke-width="7"/>
+ <path d="M310 91L310 247M174 169H446" stroke="#a9c8c8" stroke-width="2" opacity=".75"/>
+ <path class="floor-beam" d="M174 169L446 169" stroke="#ffdb8d" stroke-width="9"/><path d="M174 169L310 91L446 169" stroke="#8de8cf" stroke-width="2" fill="none"/>
+ <circle cx="310" cy="169" r="24" fill="url(#gold3)" stroke="#e8ffc9" stroke-width="3"/><text x="310" y="179" text-anchor="middle" font-size="32" fill="#263a4b">◇</text></g>
+ <g fill="#293b52" stroke="#889aac" stroke-width="4"><rect x="68" y="91" width="74" height="160"/><rect x="478" y="91" width="74" height="160"/></g>
+ ${torch(105,129)}${torch(515,129)}
+ <g class="scene-smoke"><ellipse cx="310" cy="281" rx="135" ry="16" fill="#96ede3" opacity=".13"/></g>`;
+}
+function sceneRectangle(){
+ return `<g fill="#364a60" stroke="#9cabb9" stroke-width="3"><rect x="56" y="75" width="84" height="239" rx="4"/><rect x="483" y="75" width="84" height="239" rx="4"/></g>
+ <path d="M151 304V85h318v219" fill="#263b55" stroke="#c5ae81" stroke-width="15"/>
+ <rect x="164" y="97" width="292" height="190" rx="4" fill="#7adcc8" opacity=".23" stroke="#8be9d1" stroke-width="3"/>
+ <path d="M164 287L456 97" stroke="#ffd684" stroke-width="5" stroke-dasharray="12 9"/>
+ <g class="gate-rise"><rect x="164" y="97" width="292" height="190" rx="5" fill="#3c4c64" stroke="#f5cc7e" stroke-width="5"/><g stroke="#a0aebe" stroke-width="8">${Array.from({length:7},(_,i)=>`<path d="M${184+i*42} 98V286"/>`).join('')}</g><path d="M164 169H456M164 228H456" stroke="#b1c1cf" stroke-width="7"/><g><circle cx="310" cy="191" r="28" fill="url(#gold4)"/><path d="M300 194v-7a10 10 0 0 1 20 0v7m-20 0h20v19h-20z" fill="none" stroke="#554124" stroke-width="4"/></g></g>
+ <g class="seal-lock"><circle cx="310" cy="191" r="31" fill="none" stroke="#f3cf85" stroke-width="3" stroke-dasharray="6 6"/></g>
+ <g><circle cx="121" cy="184" r="29" fill="#a3b4c6" stroke="#f8df9a" stroke-width="4"/><circle cx="501" cy="184" r="29" fill="#a3b4c6" stroke="#f8df9a" stroke-width="4"/><text x="121" y="190" text-anchor="middle" fill="#20344b" font-size="15" font-weight="800">d</text><text x="501" y="190" text-anchor="middle" fill="#20344b" font-size="15" font-weight="800">O</text></g>
+ ${torch(93,133)}${torch(527,133)}`;
+}
+function roomSceneSVG(index,opened){
+ const variants=[sceneRight,sceneIsosceles,sceneEquilateral,sceneSquare,sceneRectangle];
+ return `<svg class="scene-svg" viewBox="0 0 620 330" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${opened?'Otključana':'Zaključana'} scena: ${esc(rooms[index].title)}. ${esc(rooms[index].shape)}.">${sceneCommon(index)}${variants[index]()}<g opacity=".8"><path d="M0 320h620" stroke="#162b3d" stroke-width="20"/></g></svg>`;
+}
+function keySVG(){
+  return `<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="relicGold" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff2b8"/><stop offset="1" stop-color="#dfa54a"/></linearGradient></defs><circle cx="43" cy="36" r="24" fill="none" stroke="url(#relicGold)" stroke-width="12"/><path d="M60 54L100 94M80 75l-15 15M92 86l-12 12" fill="none" stroke="url(#relicGold)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function inventoryHtml(){
+  const owned=state.index+(state.stage==='open'&&state.index<5?1:0);
+  return `<div class="key-inventory" aria-label="Sakupljeni ključevi: ${owned} od 5"><span class="inventory-label">Ključevi hrama</span>${[0,1,2,3,4].map(i=>`<span class="key-slot ${i<owned?'earned':''}" title="${i<owned?'Osvojen':'Zaključan'} ključ ${i+1}" aria-hidden="true">${i<owned?'🗝':'◇'}</span>`).join('')}<b>${owned}/5</b></div>`;
+}
+function formulaBoard(room){
+  const lineHeight=34;
+  const top=78;
+  const height=Math.max(250, top + room.steps.length*lineHeight + 30);
+  const lines=room.steps.map((line,i)=>`<text x="26" y="${top+i*lineHeight}" font-size="19" fill="#edf6ff">${esc(line)}</text>`).join('');
+  return `<div class="tablet"><svg viewBox="0 0 340 ${height}" role="img" aria-label="Vizuelni prikaz postupka rešavanja"><defs><linearGradient id="tabletStone" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#42536b"/><stop offset="1" stop-color="#223145"/></linearGradient></defs><rect x="8" y="8" width="324" height="${height-16}" rx="22" fill="url(#tabletStone)" stroke="#7d93a8" stroke-width="2"/><rect x="18" y="18" width="304" height="${height-36}" rx="18" fill="rgba(10,18,30,.28)" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/><text x="170" y="40" text-anchor="middle" font-size="18" fill="#ffd68a" font-weight="700">${esc(room.boardTitle)}</text><text x="170" y="58" text-anchor="middle" font-size="11" fill="#b9c9db">koraci rešavanja</text>${lines}</svg><div class="tablet-note">${esc(room.boardCaption)}</div></div>`;
+}
+function explanationPanel(room){
+  return `<div class="explain-panel"><div class="explain-grid"><div><h3>Koraci rešavanja</h3><p>${esc(room.hintIntro)}</p><div class="step-list">${room.steps.map((step,i)=>`<div class="step-item"><div class="step-no">${i+1}</div><div><div class="step-text">${esc(step)}</div><div class="step-mini">${esc(room.stepNotes[i]||'')}</div></div></div>`).join('')}</div></div><div>${formulaBoard(room)}</div></div></div>`;
+}
+function goHome(){view='home';showHint=false;feedback=null;render();sfx('click')}
+function start(){
+  view=state.index>=5?'win':'game';showHint=false;feedback=null;
+  activateSound();sfx('start');render();
+}
+function reset(){
+  state={index:0,hints:0,solved:0,stage:'locked'};save();
+  view='game';showHint=false;feedback=null;sfx('start');render();
+}
+function renderHome(){
+  app.innerHTML=`<section class="hero"><div><div class="eyebrow">SAMOSTALNA MATEMATIČKA IGRA · NOVA AVANTURA</div><h1>Otkrij tajnu<br><span>Hrama Pitagore.</span></h1><p class="intro">Pet potpuno različitih prostorija. Popravi most, podigni nosač, probudi piramidu, pokreni kvadratni pod i otvori pravougaonu kapiju. Pet oblika, pet ključeva.</p><div class="feature-pills"><span class="pill">🗝 5 ključeva</span><span class="pill">△ 5 geometrijskih oblika</span><span class="pill">✨ Pokretna vrata</span><span class="pill">🏆 Završna nagrada</span><span class="pill">♫ Muzika po izboru</span></div><div class="hero-progress">${inventoryHtml()}</div><button id="start" class="btn btn-primary">${state.index>0&&state.index<5?'Nastavi avanturu':'Započni misiju'} <span aria-hidden="true">→</span></button>${state.index===5?` <button id="replay" class="btn btn-secondary">Igraj ponovo</button>`:''}<p class="fine">Bez vremenskog ograničenja i kazni za greške. Muziku i efekte uključuješ ili isključuješ gore. Napredak se čuva na ovom uređaju.</p></div><div class="illustration">${templeSVG()}</div></section>`;
+  document.getElementById('start').onclick=start;
+  const r=document.getElementById('replay');if(r)r.onclick=reset;
+}
+function renderSidebar(){
+  return `<aside class="panel sidebar"><h3>Mapa hrama</h3><div class="muted" style="font-size:.9rem">Osvojene prostorije: <b style="color:var(--gold)">${state.index}/5</b></div><div class="bar" role="progressbar" aria-label="Napredak kroz igru" aria-valuenow="${state.index}" aria-valuemin="0" aria-valuemax="5"><div style="width:${state.index*20}%"></div></div><div class="map-list">${rooms.map((r,i)=>`<div class="map-item ${i<state.index?'done':i===state.index?'active':''}"><div class="number">${i<state.index?'✓':i+1}</div><span>${esc(r.short)}</span></div>`).join('')}</div><div class="mini-note">💡 Pomoć je uvek dostupna i ne umanjuje uspeh. Najvažnije je razumevanje koraka.</div></aside>`;
+}
+function answerForm(room){
+  if(room.type==='choice'||room.type==='square')return `<div class="choice-grid">${room.choices.map(([txt,val])=>`<button class="choice" data-choice="${esc(val)}"><span aria-hidden="true">◆</span>${esc(txt)}</button>`).join('')}</div>`;
+  if(room.type==='double')return `<form id="answerForm"><div class="two-input"><label class="field">Dijagonala d (m)<input id="answer1" class="answer-input" inputmode="decimal" autocomplete="off" placeholder="npr. 15" required aria-label="Dužina dijagonale pravougaonika"></label><label class="field">Obim O (m)<input id="answer2" class="answer-input" inputmode="decimal" autocomplete="off" placeholder="npr. 42" required aria-label="Obim trougla"></label><button class="btn btn-primary" type="submit">Otključaj</button></div></form>`;
+  return `<form class="answer-form" id="answerForm"><label class="sr-only" for="answer1">Odgovor u metrima</label><input id="answer1" class="answer-input" inputmode="decimal" autocomplete="off" placeholder="Upiši broj" required><button class="btn btn-primary" type="submit">Proveri odgovor</button></form>`;
+}
+function renderGame(){
+  const room=rooms[state.index];
+  if(!room){view='win';return renderWin()}
+  const opened=state.stage==='open';
+  app.innerHTML=`<div class="game-layout"><section class="panel main-panel"><button id="home" class="back-link">← Nazad na početak</button><div class="room-kicker"><span>${room.eyebrow}</span><span>✦ ${state.index+1} / 5</span></div><h1 class="room-heading">${esc(room.title)}</h1><div class="mission-ribbon"><span class="mission-type">${esc(room.shape)}</span><small>Posmatraj prizor i pronađi matematičko rešenje</small></div><div class="room-scene ${opened?'scene-unlocked':''}${feedback?.ok?' scene-solved':''}" id="roomScene"><div class="scene-frame-title">${esc(room.title)}</div>${roomSceneSVG(state.index,opened)}<div class="scene-caption" id="sceneCaption">${opened?'🔓 Mehanizam je aktiviran!':feedback?.ok?'✨ Rešenje je pronađeno — uzmi ključ!':'🔒 Reši zagonetku da oživiš ovu scenu'}</div></div><p class="room-desc">${esc(room.description)}</p>${inventoryHtml()}<div class="room-atmosphere">${room.ambience.map((item,i)=>`<span class="atmosphere-chip"><span class="chip-dot ${i%2?'gold':''}"></span>${esc(item)}</span>`).join('')}</div><div class="visual-box">${diagSVG(room)}<p class="diagram-note">${esc(room.diagramNote)}</p></div><p class="question">${esc(room.question)}</p><div id="answerArea">${opened?'<p class="door-done">✓ Zagonetka rešena. Ključ je već u tvojoj zbirci.</p>':answerForm(room)}</div><div id="feedback" aria-live="polite"></div><div class="support"><button id="hint" class="btn btn-quiet" ${showHint?'disabled':''}>💡 ${showHint?'Pomoć prikazana':'Prikaži pomoć i korake'}</button></div><div id="hintSlot">${showHint?explanationPanel(room):''}</div></section>${renderSidebar()}</div>`;
+  document.getElementById('home').onclick=goHome;
+  document.getElementById('hint').onclick=()=>{
+    if(!showHint){
+      showHint=true;state.hints++;save();sfx('hint');
+      document.getElementById('hintSlot').innerHTML=explanationPanel(room);
+      document.getElementById('hint').disabled=true;document.getElementById('hint').textContent='💡 Pomoć prikazana';
+    }
+  };
+  const form=document.getElementById('answerForm');
+  if(form)form.onsubmit=e=>{
+    e.preventDefault();
+    const a=document.getElementById('answer1').value.trim();
+    const b=document.getElementById('answer2')?.value.trim();
+    check(b===undefined?[a]:[a,b]);
+  };
+  document.querySelectorAll('[data-choice]').forEach(btn=>btn.onclick=()=>check([btn.dataset.choice]));
+  if(opened){feedback={ok:true,body:room.success};showFeedback(feedback)}
+  else if(feedback)showFeedback(feedback);
+}
+function isCorrect(room,values){
+  if(room.type==='choice'||room.type==='square')return values[0]===room.correct;
+  if(room.type==='double')return isNumEqual(values[0],room.expected[0])&&isNumEqual(values[1],room.expected[1]);
+  return isNumEqual(values[0],room.expected[0]);
+}
+function check(values){
+  if(feedback?.ok||state.stage==='open')return;
+  const room=rooms[state.index];
+  const ok=isCorrect(room,values);
+  feedback={ok,body:ok?room.success:'To još nije tačno. Pogledaj skicu, utvrdi katete i hipotenuzu, pa pokušaj ponovo. Ako zapneš, otvori pomoć i isprati korake.'};
+  sfx(ok?'correct':'error');if(ok){document.getElementById('roomScene')?.classList.add('scene-solved');const cap=document.getElementById('sceneCaption');if(cap)cap.textContent='✨ Mehanizam je pokrenut — uzmi zlatni ključ!';}showFeedback(feedback);
+}
+function collectKey(){
+  if(!feedback?.ok||state.stage==='open')return;
+  state.stage='open';save();sfx('key');
+  document.getElementById('roomScene')?.classList.add('scene-solved','scene-unlocked');
+  const caption=document.getElementById('sceneCaption');
+  if(caption)caption.textContent='🔓 Put je otvoren — pređi u sledeću prostoriju!';
+  document.querySelectorAll('.key-inventory').forEach(node=>{
+    node.outerHTML=inventoryHtml();
+  });
+  const btn=document.getElementById('collect');if(btn)btn.remove();
+  const nextArea=document.getElementById('nextSlot');
+  if(nextArea)nextArea.innerHTML=`<div class="door-message">✦ Ključ je osvojen. Drevna vrata se otvaraju!</div><button id="next" class="btn btn-primary">${state.index===4?'Osvoji nagradu':'Uđi u sledeću prostoriju'} →</button>`;
+  const next=document.getElementById('next');if(next)next.onclick=advance;
+  sfx('door');
+}
+function advance(){
+  if(state.stage!=='open')return;
+  state.index++;state.solved=state.index;state.stage='locked';save();
+  showHint=false;feedback=null;
+  view=state.index===5?'win':'game';render();
+  if(view==='win')sfx('victory');else sfx('start');
+  window.scrollTo?.({top:0,behavior:'instant'});
+}
+function showFeedback(f){
+  const node=document.getElementById('feedback');if(!node)return;
+  const alreadyOpen=state.stage==='open';
+  node.innerHTML=`<div class="message ${f.ok?'success':'error'}"><strong>${f.ok?'✓ Zagonetka rešena!':'Pokušaj još jednom'}</strong>${esc(f.body)}${f.ok?`${alreadyOpen?'<div class="door-message">✦ Ključ je u zbirci. Vrata su otvorena.</div>':`<div class="key-reward"><div class="reward-key">${keySVG()}</div><div><b>Pronađen je zlatni ključ!</b><span>Uzmi ga da otključaš kapiju.</span></div></div>`}<div id="nextSlot" class="unlock-controls">${alreadyOpen?`<button id="next" class="btn btn-primary">${state.index===4?'Osvoji nagradu':'Uđi u sledeću prostoriju'} →</button>`:'<button id="collect" class="btn btn-primary">🗝 Uzmi ključ i otključaj vrata</button>'}</div>`:''}</div>`;
+  if(f.ok){
+    document.querySelectorAll('#answerArea input,#answerArea button').forEach(el=>el.disabled=true);
+    const collect=document.getElementById('collect');if(collect)collect.onclick=collectKey;
+    const next=document.getElementById('next');if(next)next.onclick=advance;
+  }
+}
+function renderWin(){
+  const trophyKey=`<svg class="trophy-graphic" viewBox="0 0 160 160" aria-label="Zlatni pehar čuvara Hrama"><defs><linearGradient id="cupGold" x1="0" x2="1"><stop stop-color="#ffeaa9"/><stop offset=".5" stop-color="#edae47"/><stop offset="1" stop-color="#fff0c5"/></linearGradient></defs><path d="M41 33h78v44a39 39 0 0 1-78 0z" fill="url(#cupGold)" stroke="#ffe9b1" stroke-width="3"/><path d="M42 40H22v20a24 24 0 0 0 24 24M118 40h20v20a24 24 0 0 1-24 24" fill="none" stroke="#e6a84c" stroke-width="9"/><path d="M80 112v20M52 143h56" fill="none" stroke="#ffe39e" stroke-width="13" stroke-linecap="round"/><text x="80" y="90" text-anchor="middle" font-family="Georgia" font-size="40" fill="#533b1a">△</text></svg>`;
+  const confetti=Array.from({length:22},(_,i)=>`<i class="confetti" aria-hidden="true" style="--x:${(i*37)%100}%;--delay:${(i%7)*.26}s;--dur:${3+i%4}s;--rotation:${i*55}deg"></i>`).join('');
+  app.innerHTML=`<section class="panel result win-panel">${confetti}<div class="trophy-wrap">${trophyKey}</div><div class="eyebrow">AVANTURA JE ZAVRŠENA</div><h1>Postao/la si čuvar Hrama Pitagore!</h1><p>Uz pomoć matematike sagradio/la si most, aktivirao/la stub, probudio/la piramidu, pokrenuo/la kvadratni pod i podigao/la pravougaonu kapiju.</p>${inventoryHtml()}<div class="awards"><div class="award">🏆 <b>Čuvar teoreme</b><small>Završi svih pet prostorija</small></div><div class="award">🗝 <b>Pet drevnih ključeva</b><small>Otključaj svaku kapiju</small></div>${state.hints===0?'<div class="award">⭐ <b>Samostalni istraživač</b><small>Avantura bez pomoći</small></div>':''}</div><div class="summary"><div class="summary-item"><b>5 / 5</b><span class="muted">otključanih kapija</span></div><div class="summary-item"><b>${state.hints}</b><span class="muted">korišćenih pomoći</span></div></div><div class="win-buttons"><button id="restart" class="btn btn-primary">Igraj ponovo</button><button id="home" class="btn btn-secondary">Početna</button></div><p class="help-reason">Pilot verzija 1.3 · Napredak je sačuvan samo na ovom uređaju.</p></section>`;
+  document.getElementById('restart').onclick=reset;
+  document.getElementById('home').onclick=goHome;
+}
+function render(){if(view==='home')renderHome();else if(view==='game')renderGame();else renderWin()}
+render();
+})();
+</script>
+</body>
+</html>
