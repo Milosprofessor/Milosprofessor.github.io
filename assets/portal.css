@@ -264,8 +264,13 @@ h1,h2,h3,p{overflow-wrap:break-word}
   .footer-wrap{align-items:flex-start;flex-direction:column;gap:18px}
 }
 @media (max-width:360px){
-  .brand-name{max-width:142px}
-  .nav-cta{font-size:.71rem;padding:8px 10px}
+  .nav-wrap{gap:7px}
+  .brand{gap:8px}
+  .brand-icon{width:35px;height:35px;flex-shrink:0;font-size:23px}
+  .brand-name{max-width:135px;font-size:.59rem;letter-spacing:.045em}
+  .brand-caption{font-size:.48rem;letter-spacing:.02em}
+  .nav-cta{font-size:.72rem;padding:8px 11px;gap:4px}
+  .nav-cta svg{display:none}
   .hero h1{font-size:3.07rem}
   .hero-art{height:300px}
   .float-card--one{left:-6px}.float-card--two{right:-6px}
