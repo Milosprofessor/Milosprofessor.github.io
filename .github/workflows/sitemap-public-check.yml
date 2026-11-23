@@ -1,0 +1,53 @@
+name: Javni HTTP test sitemap-a
+
+on:
+  push:
+    branches:
+      - qa/google-sitemap-live-check-2026
+
+permissions:
+  contents: read
+
+jobs:
+  check-public-pages:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Test real public URLs from GitHub-hosted runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in / /sitemap.xml /robots.txt /googleefcdcee37058b9df.html; do
+            for agent in browser googlebot; do
+              case "$agent" in
+                browser) ua="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36" ;;
+                googlebot) ua="Googlebot/2.1 (+http://www.google.com/bot.html)" ;;
+              esac
+              url="https://milosprofessor.github.io$path"
+              file="$(mktemp)"
+              headers="$(mktemp)"
+              status="$(curl -sSL --retry 2 --retry-delay 2 --max-time 25 --user-agent "$ua" --dump-header "$headers" --output "$file" --write-out "%{http_code}" "$url")"
+              echo "URL=$url agent=$agent HTTP=$status bytes=$(wc -c < "$file")"
+              grep -iE '^(HTTP/|content-type:|content-length:|location:)' "$headers" || true
+              if [[ "$status" != "200" ]]; then
+                echo "::error::Bad status for $url agent=$agent"
+                cat "$headers"
+                exit 1
+              fi
+              case "$path" in
+                /sitemap.xml)
+                  grep -q '<loc>https://milosprofessor.github.io/</loc>' "$file"
+                  python3 - "$file" <<'PY'
+          import sys, xml.etree.ElementTree as ET
+          root=ET.parse(sys.argv[1]).getroot()
+          assert root.tag == "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset", root.tag
+          print("Valid sitemap XML, URL count:",len(root))
+          PY
+                  ;;
+                /robots.txt) grep -q 'Sitemap: https://milosprofessor.github.io/sitemap.xml' "$file" ;;
+                /googleefcdcee37058b9df.html) grep -q 'google-site-verification: googleefcdcee37058b9df.html' "$file" ;;
+                /) grep -q 'MatematikON' "$file" ;;
+              esac
+            done
+          done
+          echo "ALL REMOTE HTTP CHECKS PASSED"
